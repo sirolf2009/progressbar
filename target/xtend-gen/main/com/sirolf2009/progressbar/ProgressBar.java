@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import org.eclipse.xtend.lib.annotations.Data;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Pure;
 import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
@@ -99,7 +100,9 @@ public class ProgressBar<T extends Object> {
           try {
             while ((!future.isDone())) {
               {
-                message.set(ProgressBar.this.action.getMessageQueue().take());
+                final Pair<String, Integer> update = ProgressBar.this.action.getUpdateQueue().take();
+                message.set(update.getKey());
+                progress.set(update.getValue());
                 ProgressBar.this.style.draw(ProgressBar.this.terminalWidth, createProgress.get());
               }
             }
@@ -109,22 +112,7 @@ public class ProgressBar<T extends Object> {
         }
       };
       new Thread(_function_1).start();
-      final Runnable _function_2 = new Runnable() {
-        @Override
-        public void run() {
-          try {
-            while ((!future.isDone())) {
-              {
-                progress.set(ProgressBar.this.action.getProgressQueue().take());
-                ProgressBar.this.style.draw(ProgressBar.this.terminalWidth, createProgress.get());
-              }
-            }
-          } catch (Throwable _e) {
-            throw Exceptions.sneakyThrow(_e);
-          }
-        }
-      };
-      new Thread(_function_2).start();
+      this.action.onSubmitted(future);
       final T result = future.get();
       this.style.completed(this.terminalWidth, createProgress.get());
       return result;

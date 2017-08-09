@@ -6,6 +6,9 @@ class TestProgressBar {
 
 	@Test
 	def void test() {
+		println("ASCII FAST")
+		val bar4 = new ProgressBar.Builder().name("Unit Test").action(new FastAction()).style(Styles.ASCII).build()
+		println(bar4.get())
 		println("ASCII")
 		val bar3 = new ProgressBar.Builder().name("Unit Test").action(new DumbAction()).style(Styles.ASCII).build()
 		println(bar3.get())
@@ -18,22 +21,39 @@ class TestProgressBar {
 		val bar = new ProgressBar.Builder().name("Unit Test").action(new DumbAction()).build()
 		println(bar.get())
 	}
-	
+
 	static class DumbAction extends Action<String> {
-		
+
 		override call() throws Exception {
-			for(var i = 0; i < 100; i++) {
+			for (var i = 0; i < 100; i++) {
 				message = '''I have slept «i+1» times!'''
 				progress()
-				Thread.sleep(100)
+				Thread.sleep(50)
 			}
 			"Done"
 		}
-		
+
 		override getWorkloadSize() {
 			100
 		}
-		
+
+	}
+
+	static class FastAction extends ActionTimed<String> {
+
+		override call() throws Exception {
+			for (var i = 0; i < 10000; i++) {
+				message = '''I have slept «i+1» times!'''
+				progress()
+				Thread.sleep(1)
+			}
+			"Done"
+		}
+
+		override getWorkloadSize() {
+			10000
+		}
+
 	}
 
 }

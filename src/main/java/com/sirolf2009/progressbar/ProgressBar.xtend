@@ -25,16 +25,13 @@ import java.util.function.Supplier
 		val future = executor.submit(action)
 		new Thread[
 			while(!future.done) {
-				message.set(action.messageQueue.take)
+				val update = action.updateQueue.take()
+				message.set(update.key)
+				progress.set(update.value)
 				style.draw(terminalWidth, createProgress.get())
 			}
 		].start()
-		new Thread[
-			while(!future.done) {
-				progress.set(action.progressQueue.take)
-				style.draw(terminalWidth, createProgress.get())
-			}
-		].start()
+		action.onSubmitted(future)
 		val result = future.get()
 		style.completed(terminalWidth, createProgress.get())
 		return result

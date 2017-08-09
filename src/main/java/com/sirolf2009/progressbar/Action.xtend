@@ -4,19 +4,20 @@ import java.util.concurrent.Callable
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
 import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.concurrent.Future
+import java.util.concurrent.atomic.AtomicReference
 
 @Accessors abstract class Action<T> implements Callable<T> {
 
-	val messageQueue = new LinkedBlockingQueue<String>()
-	val progressQueue = new LinkedBlockingQueue<Integer>()
+	val updateQueue = new LinkedBlockingQueue<Pair<String, Integer>>()
 
-	val AtomicInteger progress = new AtomicInteger(0)
+	val message = new AtomicReference<String>()
+	val progress = new AtomicInteger(0)
 	var int workload = getWorkloadSize()
-	var int progressBatch = 1
-	private val AtomicInteger progressCounter = new AtomicInteger(0)
 
 	def void setMessage(String message) {
-		messageQueue.offer(message)
+		this.message.set(message)
+		update()
 	}
 
 	def void progress() {
@@ -25,12 +26,16 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 	def void progress(int progress) {
 		this.progress.addAndGet(progress)
-		if(progressCounter.addAndGet(1) % progressBatch == 0) {
-			progressQueue.offer(this.progress.get())
-			progressCounter.set(0)
-		}
+		update()
+	}
+	
+	def update() {
+		updateQueue.add(message.get() -> progress.get())
 	}
 
 	def abstract int getWorkloadSize()
+	
+	def void onSubmitted(Future<T> future) {
+	}
 
 }
