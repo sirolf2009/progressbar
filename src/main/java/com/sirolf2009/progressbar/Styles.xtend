@@ -44,9 +44,10 @@ class Styles {
 			val suffix = "] "+time
 			val barLength = terminalWidth - prefix.length - suffix.length
 			val actualBarLength = Math.floor((progress as double)/(workload as double)*(barLength as double)) as int
-			val filledInSpace = (0 ..< actualBarLength-1).map["="].reduce[a,b|a+b]
-			val emptySpace = (actualBarLength ..< barLength).map[" "].reduce[a,b|a+b]
-			val bar = filledInSpace.orNothing()+">"+emptySpace.orNothing()
+			val filledInSpace = (0 ..< actualBarLength-1).map["="].reduce[a,b|a+b].orNothing()
+			val actualBar = filledInSpace.length + 1
+			val emptySpace = (actualBar ..< barLength).map[" "].reduce[a,b|a+b].orNothing()
+			val bar = filledInSpace+">"+emptySpace
 			print(prefix+bar+suffix)
 		}
 		

@@ -127,7 +127,9 @@ public class Styles {
               return (a + b);
             }
           };
-          final String filledInSpace = IterableExtensions.<String>reduce(IterableExtensions.<Integer, String>map(new ExclusiveRange(0, (actualBarLength - 1), true), _function), _function_1);
+          final String filledInSpace = this.orNothing(IterableExtensions.<String>reduce(IterableExtensions.<Integer, String>map(new ExclusiveRange(0, (actualBarLength - 1), true), _function), _function_1));
+          int _length_2 = filledInSpace.length();
+          final int actualBar = (_length_2 + 1);
           final Function1<Integer, String> _function_2 = new Function1<Integer, String>() {
             @Override
             public String apply(final Integer it) {
@@ -140,11 +142,8 @@ public class Styles {
               return (a + b);
             }
           };
-          final String emptySpace = IterableExtensions.<String>reduce(IterableExtensions.<Integer, String>map(new ExclusiveRange(actualBarLength, barLength, true), _function_2), _function_3);
-          String _orNothing = this.orNothing(filledInSpace);
-          String _plus = (_orNothing + ">");
-          String _orNothing_1 = this.orNothing(emptySpace);
-          final String bar = (_plus + _orNothing_1);
+          final String emptySpace = this.orNothing(IterableExtensions.<String>reduce(IterableExtensions.<Integer, String>map(new ExclusiveRange(actualBar, barLength, true), _function_2), _function_3));
+          final String bar = ((filledInSpace + ">") + emptySpace);
           InputOutput.<String>print(((prefix + bar) + suffix));
         }
         

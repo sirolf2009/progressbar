@@ -38,14 +38,19 @@ public class TestProgressBar {
   
   @Test
   public void test() {
+    InputOutput.<String>println("ASCII");
     ProgressBar.Builder<String> _name = new ProgressBar.Builder<String>().name("Unit Test");
     TestProgressBar.DumbAction _dumbAction = new TestProgressBar.DumbAction();
     final ProgressBar<String> bar3 = _name.action(_dumbAction).style(Styles.ASCII).build();
     InputOutput.<String>println(bar3.get());
+    InputOutput.println();
+    InputOutput.<String>println("Bar");
     ProgressBar.Builder<String> _name_1 = new ProgressBar.Builder<String>().name("Unit Test");
     TestProgressBar.DumbAction _dumbAction_1 = new TestProgressBar.DumbAction();
     final ProgressBar<String> bar2 = _name_1.action(_dumbAction_1).style(Styles.BAR).build();
     InputOutput.<String>println(bar2.get());
+    InputOutput.println();
+    InputOutput.<String>println("Simple");
     ProgressBar.Builder<String> _name_2 = new ProgressBar.Builder<String>().name("Unit Test");
     TestProgressBar.DumbAction _dumbAction_2 = new TestProgressBar.DumbAction();
     final ProgressBar<String> bar = _name_2.action(_dumbAction_2).build();

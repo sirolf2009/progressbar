@@ -3,16 +3,17 @@ package com.sirolf2009.progressbar
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.Callable
 import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.concurrent.atomic.AtomicInteger
 
 @Accessors abstract class Action<T> implements Callable<T> {
 
 	val messageQueue = new ArrayBlockingQueue<String>(100, true)
 	val progressQueue = new ArrayBlockingQueue<Integer>(100, true)
 
-	var int progress = 0
+	val AtomicInteger progress = new AtomicInteger(0)
 	var int workload = getWorkloadSize()
 	var int progressBatch = 1
-	private var int progressCounter = 0
+	private val AtomicInteger progressCounter = new AtomicInteger(0)
 
 	def void setMessage(String message) {
 		messageQueue.offer(message)
@@ -23,11 +24,10 @@ import org.eclipse.xtend.lib.annotations.Accessors
 	}
 
 	def void progress(int progress) {
-		this.progress += progress
-		progressCounter++
-		if(progressCounter % progressBatch == 0) {
-			progressQueue.add(this.progress)
-			progressCounter = 0
+		this.progress.addAndGet(progress)
+		if(progressCounter.addAndGet(1) % progressBatch == 0) {
+			progressQueue.add(this.progress.get())
+			progressCounter.set(0)
 		}
 	}
 

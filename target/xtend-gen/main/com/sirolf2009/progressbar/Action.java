@@ -2,6 +2,7 @@ package com.sirolf2009.progressbar;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.xtend.lib.annotations.Accessors;
 import org.eclipse.xtext.xbase.lib.Pure;
 
@@ -12,13 +13,13 @@ public abstract class Action<T extends Object> implements Callable<T> {
   
   private final ArrayBlockingQueue<Integer> progressQueue = new ArrayBlockingQueue<Integer>(100, true);
   
-  private int progress = 0;
+  private final AtomicInteger progress = new AtomicInteger(0);
   
   private int workload = this.getWorkloadSize();
   
   private int progressBatch = 1;
   
-  private int progressCounter = 0;
+  private final AtomicInteger progressCounter = new AtomicInteger(0);
   
   public void setMessage(final String message) {
     this.messageQueue.offer(message);
@@ -29,12 +30,13 @@ public abstract class Action<T extends Object> implements Callable<T> {
   }
   
   public void progress(final int progress) {
-    int _progress = this.progress;
-    this.progress = (_progress + progress);
-    this.progressCounter++;
-    if (((this.progressCounter % this.progressBatch) == 0)) {
-      this.progressQueue.add(Integer.valueOf(this.progress));
-      this.progressCounter = 0;
+    this.progress.addAndGet(progress);
+    int _addAndGet = this.progressCounter.addAndGet(1);
+    int _modulo = (_addAndGet % this.progressBatch);
+    boolean _equals = (_modulo == 0);
+    if (_equals) {
+      this.progressQueue.add(Integer.valueOf(this.progress.get()));
+      this.progressCounter.set(0);
     }
   }
   
@@ -51,12 +53,8 @@ public abstract class Action<T extends Object> implements Callable<T> {
   }
   
   @Pure
-  public int getProgress() {
+  public AtomicInteger getProgress() {
     return this.progress;
-  }
-  
-  public void setProgress(final int progress) {
-    this.progress = progress;
   }
   
   @Pure
@@ -78,11 +76,7 @@ public abstract class Action<T extends Object> implements Callable<T> {
   }
   
   @Pure
-  public int getProgressCounter() {
+  public AtomicInteger getProgressCounter() {
     return this.progressCounter;
-  }
-  
-  public void setProgressCounter(final int progressCounter) {
-    this.progressCounter = progressCounter;
   }
 }
