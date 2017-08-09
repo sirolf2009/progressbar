@@ -1,14 +1,14 @@
 package com.sirolf2009.progressbar
 
-import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.Callable
-import org.eclipse.xtend.lib.annotations.Accessors
+import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
+import org.eclipse.xtend.lib.annotations.Accessors
 
 @Accessors abstract class Action<T> implements Callable<T> {
 
-	val messageQueue = new ArrayBlockingQueue<String>(100, true)
-	val progressQueue = new ArrayBlockingQueue<Integer>(100, true)
+	val messageQueue = new LinkedBlockingQueue<String>()
+	val progressQueue = new LinkedBlockingQueue<Integer>()
 
 	val AtomicInteger progress = new AtomicInteger(0)
 	var int workload = getWorkloadSize()
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger
 	def void progress(int progress) {
 		this.progress.addAndGet(progress)
 		if(progressCounter.addAndGet(1) % progressBatch == 0) {
-			progressQueue.add(this.progress.get())
+			progressQueue.offer(this.progress.get())
 			progressCounter.set(0)
 		}
 	}

@@ -1,7 +1,7 @@
 package com.sirolf2009.progressbar;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.xtend.lib.annotations.Accessors;
 import org.eclipse.xtext.xbase.lib.Pure;
@@ -9,9 +9,9 @@ import org.eclipse.xtext.xbase.lib.Pure;
 @Accessors
 @SuppressWarnings("all")
 public abstract class Action<T extends Object> implements Callable<T> {
-  private final ArrayBlockingQueue<String> messageQueue = new ArrayBlockingQueue<String>(100, true);
+  private final LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<String>();
   
-  private final ArrayBlockingQueue<Integer> progressQueue = new ArrayBlockingQueue<Integer>(100, true);
+  private final LinkedBlockingQueue<Integer> progressQueue = new LinkedBlockingQueue<Integer>();
   
   private final AtomicInteger progress = new AtomicInteger(0);
   
@@ -35,7 +35,7 @@ public abstract class Action<T extends Object> implements Callable<T> {
     int _modulo = (_addAndGet % this.progressBatch);
     boolean _equals = (_modulo == 0);
     if (_equals) {
-      this.progressQueue.add(Integer.valueOf(this.progress.get()));
+      this.progressQueue.offer(Integer.valueOf(this.progress.get()));
       this.progressCounter.set(0);
     }
   }
@@ -43,12 +43,12 @@ public abstract class Action<T extends Object> implements Callable<T> {
   public abstract int getWorkloadSize();
   
   @Pure
-  public ArrayBlockingQueue<String> getMessageQueue() {
+  public LinkedBlockingQueue<String> getMessageQueue() {
     return this.messageQueue;
   }
   
   @Pure
-  public ArrayBlockingQueue<Integer> getProgressQueue() {
+  public LinkedBlockingQueue<Integer> getProgressQueue() {
     return this.progressQueue;
   }
   
