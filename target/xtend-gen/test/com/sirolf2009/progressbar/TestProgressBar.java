@@ -11,7 +11,6 @@ import org.junit.Test;
 @SuppressWarnings("all")
 public class TestProgressBar {
   public static class DumbAction extends Action<String> {
-    @Override
     public String call() throws Exception {
       String _xblockexpression = null;
       {
@@ -31,18 +30,16 @@ public class TestProgressBar {
       return _xblockexpression;
     }
     
-    @Override
     public int getWorkloadSize() {
       return 100;
     }
   }
   
   public static class FastAction extends ActionTimed<String> {
-    @Override
     public String call() throws Exception {
       String _xblockexpression = null;
       {
-        for (int i = 0; (i < 10000); i++) {
+        for (int i = 0; (i < 1000); i++) {
           {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("I have slept ");
@@ -50,7 +47,7 @@ public class TestProgressBar {
             _builder.append(" times!");
             this.setMessage(_builder.toString());
             this.progress();
-            Thread.sleep(1);
+            Thread.sleep(5);
           }
         }
         _xblockexpression = "Done";
@@ -58,9 +55,8 @@ public class TestProgressBar {
       return _xblockexpression;
     }
     
-    @Override
     public int getWorkloadSize() {
-      return 10000;
+      return 1000;
     }
   }
   

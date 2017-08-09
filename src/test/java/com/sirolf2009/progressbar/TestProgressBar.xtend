@@ -45,16 +45,16 @@ class TestProgressBar {
 	static class FastAction extends ActionTimed<String> {
 
 		override call() throws Exception {
-			for (var i = 0; i < 10000; i++) {
+			for (var i = 0; i < 1000; i++) {
 				message = '''I have slept «i+1» times!'''
 				progress()
-				Thread.sleep(1)
+				Thread.sleep(5)
 			}
 			"Done"
 		}
 
 		override getWorkloadSize() {
-			10000
+			1000
 		}
 
 	}
