@@ -66,27 +66,32 @@ public class TestProgressBar {
   
   @Test
   public void test() {
-    InputOutput.<String>println("ASCII FAST");
+    InputOutput.<String>println("Indeterminate simple");
     ProgressBar.Builder<String> _name = new ProgressBar.Builder<String>().name("Unit Test");
+    TestProgressBar.DumbAction _dumbAction = new TestProgressBar.DumbAction();
+    final ProgressBar<String> bar5 = _name.action(_dumbAction).style(Styles.INDETERMINATE_SIMPLE).build();
+    InputOutput.<String>println(bar5.get());
+    InputOutput.<String>println("ASCII Fast");
+    ProgressBar.Builder<String> _name_1 = new ProgressBar.Builder<String>().name("Unit Test");
     TestProgressBar.FastAction _fastAction = new TestProgressBar.FastAction();
-    final ProgressBar<String> bar4 = _name.action(_fastAction).style(Styles.ASCII).build();
+    final ProgressBar<String> bar4 = _name_1.action(_fastAction).style(Styles.ASCII).build();
     InputOutput.<String>println(bar4.get());
     InputOutput.<String>println("ASCII");
-    ProgressBar.Builder<String> _name_1 = new ProgressBar.Builder<String>().name("Unit Test");
-    TestProgressBar.DumbAction _dumbAction = new TestProgressBar.DumbAction();
-    final ProgressBar<String> bar3 = _name_1.action(_dumbAction).style(Styles.ASCII).build();
+    ProgressBar.Builder<String> _name_2 = new ProgressBar.Builder<String>().name("Unit Test");
+    TestProgressBar.DumbAction _dumbAction_1 = new TestProgressBar.DumbAction();
+    final ProgressBar<String> bar3 = _name_2.action(_dumbAction_1).style(Styles.ASCII).build();
     InputOutput.<String>println(bar3.get());
     InputOutput.println();
     InputOutput.<String>println("Bar");
-    ProgressBar.Builder<String> _name_2 = new ProgressBar.Builder<String>().name("Unit Test");
-    TestProgressBar.DumbAction _dumbAction_1 = new TestProgressBar.DumbAction();
-    final ProgressBar<String> bar2 = _name_2.action(_dumbAction_1).style(Styles.BAR).build();
+    ProgressBar.Builder<String> _name_3 = new ProgressBar.Builder<String>().name("Unit Test");
+    TestProgressBar.DumbAction _dumbAction_2 = new TestProgressBar.DumbAction();
+    final ProgressBar<String> bar2 = _name_3.action(_dumbAction_2).style(Styles.BAR).build();
     InputOutput.<String>println(bar2.get());
     InputOutput.println();
     InputOutput.<String>println("Simple");
-    ProgressBar.Builder<String> _name_3 = new ProgressBar.Builder<String>().name("Unit Test");
-    TestProgressBar.DumbAction _dumbAction_2 = new TestProgressBar.DumbAction();
-    final ProgressBar<String> bar = _name_3.action(_dumbAction_2).build();
+    ProgressBar.Builder<String> _name_4 = new ProgressBar.Builder<String>().name("Unit Test");
+    TestProgressBar.DumbAction _dumbAction_3 = new TestProgressBar.DumbAction();
+    final ProgressBar<String> bar = _name_4.action(_dumbAction_3).build();
     InputOutput.<String>println(bar.get());
   }
 }

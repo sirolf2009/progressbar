@@ -6,7 +6,10 @@ class TestProgressBar {
 
 	@Test
 	def void test() {
-		println("ASCII FAST")
+		println("Indeterminate simple")
+		val bar5 = new ProgressBar.Builder().name("Unit Test").action(new DumbAction()).style(Styles.INDETERMINATE_SIMPLE).build()
+		println(bar5.get())
+		println("ASCII Fast")
 		val bar4 = new ProgressBar.Builder().name("Unit Test").action(new FastAction()).style(Styles.ASCII).build()
 		println(bar4.get())
 		println("ASCII")

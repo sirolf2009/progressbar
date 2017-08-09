@@ -4,6 +4,10 @@ import com.sirolf2009.progressbar.Progress;
 import com.sirolf2009.progressbar.Style;
 import java.text.DecimalFormat;
 import java.time.Duration;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
+import org.eclipse.xtend.lib.annotations.Data;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.ExclusiveRange;
 import org.eclipse.xtext.xbase.lib.Extension;
@@ -12,9 +16,88 @@ import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.Functions.Function2;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.ObjectExtensions;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
+import org.eclipse.xtext.xbase.lib.Pure;
+import org.eclipse.xtext.xbase.lib.util.ToStringBuilder;
 
 @SuppressWarnings("all")
 public class Styles {
+  @Data
+  private static class AnimationFrame implements Delayed {
+    private final String keyFrame;
+    
+    private final long startTime;
+    
+    public AnimationFrame(final String keyFrame, final long delay) {
+      this.keyFrame = keyFrame;
+      long _currentTimeMillis = System.currentTimeMillis();
+      long _plus = (_currentTimeMillis + delay);
+      this.startTime = _plus;
+    }
+    
+    @Override
+    public long getDelay(final TimeUnit unit) {
+      long _currentTimeMillis = System.currentTimeMillis();
+      long _minus = (this.startTime - _currentTimeMillis);
+      return unit.convert(_minus, TimeUnit.MILLISECONDS);
+    }
+    
+    @Override
+    public int compareTo(final Delayed o) {
+      return Long.valueOf(this.startTime).compareTo(Long.valueOf(((Styles.AnimationFrame) o).startTime));
+    }
+    
+    @Override
+    @Pure
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((this.keyFrame== null) ? 0 : this.keyFrame.hashCode());
+      result = prime * result + (int) (this.startTime ^ (this.startTime >>> 32));
+      return result;
+    }
+    
+    @Override
+    @Pure
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      Styles.AnimationFrame other = (Styles.AnimationFrame) obj;
+      if (this.keyFrame == null) {
+        if (other.keyFrame != null)
+          return false;
+      } else if (!this.keyFrame.equals(other.keyFrame))
+        return false;
+      if (other.startTime != this.startTime)
+        return false;
+      return true;
+    }
+    
+    @Override
+    @Pure
+    public String toString() {
+      ToStringBuilder b = new ToStringBuilder(this);
+      b.add("keyFrame", this.keyFrame);
+      b.add("startTime", this.startTime);
+      return b.toString();
+    }
+    
+    @Pure
+    public String getKeyFrame() {
+      return this.keyFrame;
+    }
+    
+    @Pure
+    public long getStartTime() {
+      return this.startTime;
+    }
+  }
+  
   public final static Style SIMPLE = new Function0<Style>() {
     public Style apply() {
       abstract class __Styles_1 implements Style {
@@ -277,6 +360,70 @@ public class Styles {
         }
       };
       return ___Styles_3;
+    }
+  }.apply();
+  
+  public final static Style INDETERMINATE_SIMPLE = new Function0<Style>() {
+    public Style apply() {
+      abstract class __Styles_4 implements Style {
+        DelayQueue<Styles.AnimationFrame> animation;
+        
+        String currentKey;
+      }
+      
+      __Styles_4 ___Styles_4 = new __Styles_4() {
+        {
+          animation = ObjectExtensions.<DelayQueue<Styles.AnimationFrame>>operator_doubleArrow(new DelayQueue<Styles.AnimationFrame>(), new Procedure1<DelayQueue<Styles.AnimationFrame>>() {
+            @Override
+            public void apply(final DelayQueue<Styles.AnimationFrame> it) {
+              Styles.AnimationFrame _animationFrame = new Styles.AnimationFrame("│", 0);
+              it.add(_animationFrame);
+              Styles.AnimationFrame _animationFrame_1 = new Styles.AnimationFrame("╱", 100);
+              it.add(_animationFrame_1);
+              Styles.AnimationFrame _animationFrame_2 = new Styles.AnimationFrame("─", 200);
+              it.add(_animationFrame_2);
+              Styles.AnimationFrame _animationFrame_3 = new Styles.AnimationFrame("╲", 300);
+              it.add(_animationFrame_3);
+            }
+          });
+          
+          currentKey = "│";
+        }
+        @Override
+        public void setup(final int terminalWidth, @Extension final Progress progressObject) {
+        }
+        
+        @Override
+        public synchronized void draw(final int terminalWidth, @Extension final Progress progressObject) {
+          Styles.clearLine(terminalWidth);
+          final Styles.AnimationFrame newKey = this.animation.poll();
+          String _xifexpression = null;
+          if ((newKey != null)) {
+            String _xblockexpression = null;
+            {
+              Styles.AnimationFrame _animationFrame = new Styles.AnimationFrame(this.currentKey, 100);
+              this.animation.add(_animationFrame);
+              this.currentKey = newKey.keyFrame;
+              _xblockexpression = this.currentKey;
+            }
+            _xifexpression = _xblockexpression;
+          } else {
+            _xifexpression = this.currentKey;
+          }
+          final String frame = _xifexpression;
+          String _orElse = progressObject.getMessage().orElse("");
+          String _plus = (_orElse + " ");
+          String _plus_1 = (_plus + frame);
+          InputOutput.<String>print(_plus_1);
+        }
+        
+        @Override
+        public void completed(final int terminalWidth, @Extension final Progress progress) {
+          Styles.clearLine(terminalWidth);
+          InputOutput.<String>println(progress.getMessage().orElse(""));
+        }
+      };
+      return ___Styles_4;
     }
   }.apply();
   
