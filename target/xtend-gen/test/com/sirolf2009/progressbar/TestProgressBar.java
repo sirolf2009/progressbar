@@ -11,6 +11,7 @@ import org.junit.Test;
 @SuppressWarnings("all")
 public class TestProgressBar {
   public static class DumbAction extends Action<String> {
+    @Override
     public String call() throws Exception {
       String _xblockexpression = null;
       {
@@ -30,12 +31,14 @@ public class TestProgressBar {
       return _xblockexpression;
     }
     
+    @Override
     public int getWorkloadSize() {
       return 100;
     }
   }
   
   public static class FastAction extends ActionTimed<String> {
+    @Override
     public String call() throws Exception {
       String _xblockexpression = null;
       {
@@ -55,6 +58,7 @@ public class TestProgressBar {
       return _xblockexpression;
     }
     
+    @Override
     public int getWorkloadSize() {
       return 1000;
     }
